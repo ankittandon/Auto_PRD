@@ -8,10 +8,12 @@ import requests
 import os
 
 # Set up the Anthropic API client
-client = Anthropic()
 MODEL_NAME = "claude-3-haiku-20240229"
 
 anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
+if not anthropic_api_key:
+    raise ValueError("No API key found in environment variables. Make sure ANTHROPIC_API_KEY is set in your .env file.")
+
 client = Anthropic(
     api_key=anthropic_api_key,
 )
@@ -26,7 +28,7 @@ pdf_urls = [
 ]
 
 # User's question
-QUESTION = "?"
+QUESTION = "What are the key trends in Apple's revenue across these quarters?"  # Or whatever question you want to ask
 
 # Step 3 Download and Convert PDFs
 # Function to download a PDF file from a URL and save it to a specified folder
@@ -79,8 +81,8 @@ def pdf_to_base64_pngs(pdf_path, quality=75, max_size=(1024, 1024)):
 folder = "../images/using_sub_agents"
 
 
-# Create the directory if it doesn't exist
-os.makedirs(folder)
+# Create the directory if it doesn't exist, using exist_ok=True
+os.makedirs(folder, exist_ok=True)
 
 # Download the PDFs concurrently
 with ThreadPoolExecutor() as executor:
